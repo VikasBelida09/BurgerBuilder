@@ -104,9 +104,12 @@ class Auth extends Component {
     }
     return (
       <div className={classes.Auth}>
-        {this.props.token ? (
-          <Redirect to={this.props.authRedirectPath} />
-        ) : null}
+        {
+          (console.log(this.props.path),
+          this.props.token ? (
+            <Redirect to={this.props.path} />
+          ) : null)
+        }
         {errorMessage}
         <form onSubmit={this.submitHandler}>
           {form}

@@ -1,4 +1,5 @@
 import * as actionTypes from "../actions/actions";
+import { updateObject } from "../../Shared/utility";
 const initialState = {
   ingredients: null,
   totalPrice: 4,
@@ -10,35 +11,46 @@ const INGREDIENTS_PRICES = {
   meat: 3,
   bacon: 0.5,
 };
+const addIngredients = (state, action) => {
+  const updatedIngredient = {
+    [action.ingredients]: state.ingredients[action.ingredients] + 1,
+  };
+  const updatedIngredients = updateObject(state.ingredients, updatedIngredient);
+  const updatedState = {
+    ingredients: updatedIngredients,
+    totalPrice: state.totalPrice + INGREDIENTS_PRICES[action.ingredients],
+    building: true,
+  };
+  return updateObject(state, updatedState);
+};
+const removeIngredients = (state, action) => {
+  const updatedIngredient = {
+    [action.ingredients]: state.ingredients[action.ingredients] - 1,
+  };
+  const updatedIngredients = updateObject(state.ingredients, updatedIngredient);
+  const updatedState = {
+    ingredients: updatedIngredients,
+    totalPrice: state.totalPrice - INGREDIENTS_PRICES[action.ingredients],
+    building: true,
+  };
+  return updateObject(state, updatedState);
+};
+const setIngredients = (state, action) => {
+  const updatedState = {
+    ingredients: action.ingredients,
+    totalPrice: 4,
+    building: false,
+  };
+  return updateObject(state, updatedState);
+};
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.ADD_INGREDIENTS:
-      return {
-        ...state,
-        ingredients: {
-          ...state.ingredients,
-          [action.ingredients]: state.ingredients[action.ingredients] + 1,
-        },
-        totalPrice: state.totalPrice + INGREDIENTS_PRICES[action.ingredients],
-        building: true,
-      };
+      return addIngredients(state, action);
     case actionTypes.REMOVE_INGREDIENTS:
-      return {
-        ...state,
-        ingredients: {
-          ...state.ingredients,
-          [action.ingredients]: state.ingredients[action.ingredients] - 1,
-        },
-        building: true,
-        totalPrice: state.totalPrice - INGREDIENTS_PRICES[action.ingredients],
-      };
+      return removeIngredients(state, action);
     case actionTypes.SET_INGREDIENTS:
-      return {
-        ...state,
-        ingredients: action.ingredients,
-        totalPrice: 4,
-        building: false,
-      };
+      return setIngredients(state, action);
     default:
       return state;
   }
